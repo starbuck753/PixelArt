@@ -23,14 +23,15 @@ var nombreColores = ['White', 'LightYellow',
 // Variable para guardar el elemento 'color-personalizado'
 // Es decir, el que se elige con la rueda de color.
 var colorPersonalizado = document.getElementById('color-personalizado');
+var colorActual;
+var mouseDown = false;
 
 colorPersonalizado.addEventListener('change', 
   (function() {
     // Se guarda el color de la rueda en colorActual
     colorActual = colorPersonalizado.value;
     // Completar para que cambie el indicador-de-color al colorActual
-
-
+    $("#indicador-de-color").css("background-color", colorActual);
   })
 );
 
@@ -42,7 +43,11 @@ function crearPaleta (){
   for (var n=0; n < nombreColores.length; n++){
     var divColor = document.createElement("div");
     $(divColor).css("background-color", nombreColores[n])
-      .addClass("color-paleta");
+      .addClass("color-paleta")
+      .click(function(e){
+                colorActual = e.target.style.backgroundColor
+                $("#indicador-de-color").css("background-color", colorActual);
+              });
     
     $(paleta).append(divColor);
   }
@@ -53,9 +58,28 @@ function crearGrilla (){
 
   for (var n=0; n < 1750; n++){
     var divPixel = document.createElement("div");
-    $(grillaPixeles).append(divPixel);
+    $(divPixel).mousedown(function(e){
+          mouseDown = true;
+          e.target.style.backgroundColor = colorActual;
+        })
+      .mouseup(function(e){
+          mouseDown = false;
+        })
+      .mouseover(function(e){
+          if(mouseDown){
+            e.target.style.backgroundColor = colorActual;
+          }
+        });
+
+    $(grillaPixeles).append(divPixel);  
   }
 
+}
+
+function borrarTodo(){
+  $("#grilla-pixeles div").fadeTo(500, 0.2, function(){
+    $(this).css("background-color","#fff").fadeTo(0, 1);
+  })
 }
 
 function inicio(){
